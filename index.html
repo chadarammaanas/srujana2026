@@ -186,10 +186,21 @@
             <label for="year">Year <span class="required">*</span></label>
             <select id="year" name="year">
               <option value="">Select Year</option>
-              <option value="1st Year">1st Year</option>
-              <option value="2nd Year">2nd Year</option>
-              <option value="3rd Year">3rd Year</option>
-              <option value="4th Year">4th Year</option>
+              <optgroup label="B.Tech / B.E. / Diploma">
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </optgroup>
+              <optgroup label="M.Tech / MCA / MBA">
+                <option value="M.Tech 1st Year">M.Tech 1st Year</option>
+                <option value="M.Tech 2nd Year">M.Tech 2nd Year</option>
+                <option value="MCA 1st Year">MCA 1st Year</option>
+                <option value="MCA 2nd Year">MCA 2nd Year</option>
+                <option value="MCA 3rd Year">MCA 3rd Year</option>
+                <option value="MBA 1st Year">MBA 1st Year</option>
+                <option value="MBA 2nd Year">MBA 2nd Year</option>
+              </optgroup>
             </select>
             <span class="error-msg" id="year-err"></span>
           </div>
@@ -221,24 +232,16 @@
   <!-- ── TOAST ── -->
   <div class="toast" id="toast"></div>
 
+  <!-- ── Firebase credentials (gitignored, injected by GitHub Actions on deploy) ── -->
+  <script src="config.js"></script>
+
   <!-- ── FIREBASE v9 (CDN) ── -->
   <script type="module">
     import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, where, limit, serverTimestamp }
                                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    /* ── Firebase config (inlined) ── */
-    const firebaseConfig = {
-      apiKey: "AIzaSyBJuinaGCtOKij845nETeXJIib2FjuC_XQ",
-      authDomain: "srujana-18a0f.firebaseapp.com",
-      projectId: "srujana-18a0f",
-      storageBucket: "srujana-18a0f.firebasestorage.app",
-      messagingSenderId: "1082148909238",
-      appId: "1:1082148909238:web:ec486ed40b4ad1a7ce7617",
-      measurementId: "G-Y4WBVHVX0S"
-    };
-
-    const app = initializeApp(firebaseConfig);
+    const app = initializeApp(window.FIREBASE_CONFIG);
     const db  = getFirestore(app);
 
     /* ── "Other" college reveals text input ── */
