@@ -224,7 +224,7 @@
   <!-- ── FIREBASE v9 (CDN) ── -->
   <script type="module">
     import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp }
+    import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp }
                                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     /* ── parse firebase-config.js ── */
@@ -280,9 +280,23 @@
 
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
-      btn.textContent = "Submitting…";
+      btn.textContent = "Checking…";
 
       try {
+        /* ── Duplicate check: block if mobile already registered ── */
+        const existing = await getDocs(
+          query(collection(db, "cr_registrations"), where("mobile", "==", mobile))
+        );
+
+        if (!existing.empty) {
+          const prev = existing.docs[0].data();
+          setError("mobile",
+            `This number is already registered under "${prev.name}" (${prev.college}).`);
+          showToast("⚠️ This mobile number is already in the system.", true);
+          return;   // stop – do NOT write a duplicate
+        }
+
+        /* ── Safe to insert ── */
         await addDoc(collection(db, "cr_registrations"), {
           name, college, branch, year, mobile,
           createdAt: serverTimestamp(),
