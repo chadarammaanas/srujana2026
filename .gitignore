@@ -1,8 +1,0 @@
-# Firebase credentials – NEVER commit the real config
-config.js
-
-# OS / editor clutter
-.DS_Store
-Thumbs.db
-.vscode/
-firebase-config.js

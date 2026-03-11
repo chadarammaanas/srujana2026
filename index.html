@@ -232,16 +232,24 @@
   <!-- ── TOAST ── -->
   <div class="toast" id="toast"></div>
 
-  <!-- ── Firebase credentials (gitignored, injected by GitHub Actions on deploy) ── -->
-  <script src="config.js"></script>
-
   <!-- ── FIREBASE v9 (CDN) ── -->
   <script type="module">
     import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, where, limit, serverTimestamp }
                                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const app = initializeApp(window.FIREBASE_CONFIG);
+    /* ── Firebase config (inlined) ── */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJuinaGCtOKij845nETeXJIib2FjuC_XQ",
+      authDomain: "srujana-18a0f.firebaseapp.com",
+      projectId: "srujana-18a0f",
+      storageBucket: "srujana-18a0f.firebasestorage.app",
+      messagingSenderId: "1082148909238",
+      appId: "1:1082148909238:web:ec486ed40b4ad1a7ce7617",
+      measurementId: "G-Y4WBVHVX0S"
+    };
+
+    const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
     /* ── "Other" college reveals text input ── */
