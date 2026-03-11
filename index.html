@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRUJANA 2026 – CR Registration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <div class="header-banner">
+    <div class="event-label">Class Representative Data Collection</div>
+    <h1>SRUJANA 2026</h1>
+    <div class="tagline">From Innovation to Nation Building – Towards Viksit Bharat 2047</div>
+    <div class="date-venue">
+      <span class="badge">📅 3rd – 5th April 2026</span>
+      <span class="badge">📍 SVPEC, Visakhapatnam</span>
+    </div>
+  </div>
+
+  <!-- ── FORM ── -->
+  <div class="container">
+    <div class="card">
+      <div class="card-title">CR Details Form</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">
+        Fill in the Class Representative's details. All fields marked
+        <span style="color:var(--danger)">*</span> are required.
+      </p>
+
+      <form id="crForm" novalidate>
+        <div class="form-grid">
+
+          <!-- CR Name -->
+          <div class="form-group full-width">
+            <label for="name">CR Full Name <span class="required">*</span></label>
+            <input type="text" id="name" name="name" placeholder="e.g. Ravi Kumar" autocomplete="off" />
+            <span class="error-msg" id="name-err"></span>
+          </div>
+
+          <!-- College -->
+          <div class="form-group full-width">
+            <label for="college">College <span class="required">*</span></label>
+            <select id="college" name="college">
+              <option value="">— Select College —</option>
+
+              <optgroup label="Visakhapatnam">
+                <option>Andhra University College of Engineering (AUCE)</option>
+                <option>GVP College of Engineering (A)</option>
+                <option>GITAM University – School of Technology</option>
+                <option>Vignan's Institute of Information Technology (VIIT)</option>
+                <option>Anil Neerukonda Institute of Technology &amp; Sciences (ANITS)</option>
+                <option>Sanketika Vidya Parishad Engineering College (SVPEC)</option>
+                <option>Raghu Engineering College (A)</option>
+                <option>Miracle Educational Society Group of Institutions (MITS)</option>
+                <option>Dr. Lankapalli Bullayya College of Engineering (LBCE)</option>
+                <option>Dadi Institute of Engineering &amp; Technology (DIET)</option>
+                <option>Swarnandhra College of Engineering &amp; Technology</option>
+                <option>Sri Vasavi Engineering College, Visakhapatnam</option>
+              </optgroup>
+
+              <optgroup label="Vizianagaram">
+                <option>MVGR College of Engineering (A), Vizianagaram</option>
+                <option>Centurion University of Technology &amp; Management, Vizianagaram</option>
+                <option>Bonam Venkata Chalamayya Engineering College (BVCEC)</option>
+              </optgroup>
+
+              <optgroup label="Srikakulam">
+                <option>Srinivasa Institute of Engineering &amp; Technology (SIET), Srikakulam</option>
+                <option>Sri Sivani College of Engineering, Srikakulam</option>
+                <option>Narayana Engineering College, Srikakulam</option>
+              </optgroup>
+
+              <optgroup label="East Godavari">
+                <option>JNTU University College of Engineering Kakinada (UCEK)</option>
+                <option>Aditya Engineering College, Surampalem</option>
+                <option>Pragati Engineering College, Surampalem</option>
+                <option>Pydah College of Engineering &amp; Technology, Kakinada</option>
+                <option>Sasi Institute of Technology &amp; Engineering, Tadepalligudem</option>
+              </optgroup>
+
+              <optgroup label="West Godavari">
+                <option>Vishnu Institute of Technology, Bhimavaram</option>
+                <option>Sir C R Reddy College of Engineering, Eluru</option>
+                <option>S.R.K.R. Engineering College, Bhimavaram</option>
+                <option>Sri Vasavi Engineering College, Pedatadepalli</option>
+              </optgroup>
+
+              <optgroup label="Krishna / Vijayawada">
+                <option>Prasad V. Potluri Siddhartha Institute of Technology (PVPSIT)</option>
+                <option>Velagapudi Ramakrishna Siddhartha Engineering College (VRSEC)</option>
+                <option>DVR &amp; Dr. HS MIC College of Technology, Kanchikacherla</option>
+                <option>Dhanekula Institute of Engineering &amp; Technology</option>
+              </optgroup>
+
+              <optgroup label="Guntur">
+                <option>KL University (Deemed to be University), Guntur</option>
+                <option>RVR &amp; JC College of Engineering, Guntur</option>
+                <option>Narasaraopeta Engineering College, Guntur</option>
+                <option>Chalapathi Institute of Engineering &amp; Technology, Guntur</option>
+              </optgroup>
+
+              <optgroup label="Tirupati / Anantapur / Kurnool">
+                <option>Sri Venkateswara University College of Engineering (SVUCE)</option>
+                <option>JNTUA University College of Engineering, Anantapur</option>
+                <option>G. Pulla Reddy Engineering College, Kurnool</option>
+                <option>Sreenivasa Institute of Technology &amp; Management Studies (SITAMS)</option>
+              </optgroup>
+
+              <optgroup label="Other">
+                <option value="Other">Other College (specify below)</option>
+              </optgroup>
+            </select>
+            <input type="text" id="college-other" name="college_other"
+                   placeholder="Enter your college name"
+                   style="display:none;margin-top:8px;" />
+            <span class="error-msg" id="college-err"></span>
+          </div>
+
+          <!-- Department -->
+          <div class="form-group full-width">
+            <label for="branch">Department / Branch <span class="required">*</span></label>
+            <select id="branch" name="branch">
+              <option value="">— Select Department —</option>
+
+              <optgroup label="Engineering (B.Tech / B.E.)">
+                <option>Architecture (B.Arch)</option>
+                <option>Biotechnology</option>
+                <option>Chemical Engineering</option>
+                <option>Civil Engineering</option>
+                <option>Computer Science &amp; Engineering (CSE)</option>
+                <option>Computer Science &amp; Systems Engineering</option>
+                <option>CSE – Artificial Intelligence &amp; Machine Learning</option>
+                <option>CSE – Data Science</option>
+                <option>CSE – Internet of Things (IoT)</option>
+                <option>CSE – Cyber Security</option>
+                <option>Electrical Engineering (EE)</option>
+                <option>Electrical &amp; Electronics Engineering (EEE)</option>
+                <option>Electronics &amp; Communication Engineering (ECE)</option>
+                <option>Electronics &amp; Instrumentation Engineering (EIE)</option>
+                <option>Environmental Engineering</option>
+                <option>Geo-Engineering &amp; Engineering Geology</option>
+                <option>Information Technology (IT)</option>
+                <option>Instrument Technology</option>
+                <option>Marine Engineering</option>
+                <option>Materials Science &amp; Metallurgical Engineering</option>
+                <option>Mechanical Engineering</option>
+                <option>Metallurgical Engineering</option>
+                <option>Mining Engineering</option>
+                <option>Naval Architecture &amp; Ocean Engineering</option>
+                <option>Petroleum Engineering</option>
+                <option>Production Engineering</option>
+                <option>Textile Technology</option>
+              </optgroup>
+
+              <optgroup label="Post Graduate (M.Tech / MCA / MBA)">
+                <option>Information Technology &amp; Computer Applications (MCA)</option>
+                <option>M.Tech – Computer Science &amp; Engineering</option>
+                <option>M.Tech – VLSI &amp; Embedded Systems</option>
+                <option>M.Tech – Power Electronics &amp; Drives</option>
+                <option>M.Tech – Structural Engineering</option>
+                <option>M.Tech – Machine Design</option>
+                <option>MBA – Technology Management</option>
+              </optgroup>
+
+              <optgroup label="Diploma">
+                <option>Diploma – Civil Engineering</option>
+                <option>Diploma – Chemical Engineering</option>
+                <option>Diploma – Computer Engineering</option>
+                <option>Diploma – Electrical Engineering</option>
+                <option>Diploma – Electronics &amp; Communication</option>
+                <option>Diploma – Mechanical Engineering</option>
+                <option>Diploma – Mining Engineering</option>
+                <option>Diploma – Textile Technology</option>
+              </optgroup>
+
+              <optgroup label="Other">
+                <option value="Other Dept">Other (not listed)</option>
+              </optgroup>
+            </select>
+            <span class="error-msg" id="branch-err"></span>
+          </div>
+
+          <!-- Year -->
+          <div class="form-group">
+            <label for="year">Year <span class="required">*</span></label>
+            <select id="year" name="year">
+              <option value="">Select Year</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+            <span class="error-msg" id="year-err"></span>
+          </div>
+
+          <!-- Mobile -->
+          <div class="form-group">
+            <label for="mobile">Mobile Number <span class="required">*</span></label>
+            <input type="tel" id="mobile" name="mobile"
+                   placeholder="10-digit number"
+                   maxlength="10" inputmode="numeric" />
+            <span class="error-msg" id="mobile-err"></span>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <br />
+        <button type="submit" class="btn-submit" id="submitBtn">
+          ✅ Submit CR Details
+        </button>
+      </form>
+    </div><!-- /card -->
+
+    <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px;">
+      Data collected for SRUJANA 2026 outreach only. &nbsp;|&nbsp;
+      <a href="dashboard.html" style="color:var(--muted);">Admin</a>
+    </p>
+  </div><!-- /container -->
+
+  <!-- ── TOAST ── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ── FIREBASE v9 (CDN) ── -->
+  <script type="module">
+    import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp }
+                                from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* ── parse firebase-config.js ── */
+    const firebaseConfig = await fetch("firebase-config.js")
+      .then(r => r.text())
+      .then(src => {
+        const m = src.match(/const firebaseConfig\s*=\s*(\{[\s\S]*?\});/);
+        if (!m) throw new Error("Cannot parse config");
+        return new Function("return " + m[1])(); // eslint-disable-line no-new-func
+      })
+      .catch(() => null);
+
+    const notConfigured = !firebaseConfig || firebaseConfig.apiKey === "YOUR_API_KEY";
+    if (notConfigured) {
+      document.getElementById("submitBtn").disabled = true;
+      showToast("⚠️ Firebase not configured yet – edit firebase-config.js", true);
+    }
+
+    const app = notConfigured ? null : initializeApp(firebaseConfig);
+    const db  = app ? getFirestore(app) : null;
+
+    /* ── "Other" college reveals text input ── */
+    document.getElementById("college").addEventListener("change", function () {
+      const other = document.getElementById("college-other");
+      other.style.display = this.value === "Other" ? "block" : "none";
+      if (this.value !== "Other") other.value = "";
+    });
+
+    /* ── Submit ── */
+    document.getElementById("crForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!db) { showToast("Firebase not configured.", true); return; }
+
+      clearErrors();
+      let valid = true;
+
+      const name   = document.getElementById("name").value.trim();
+      const colSel = document.getElementById("college").value;
+      const college = colSel === "Other"
+                       ? document.getElementById("college-other").value.trim()
+                       : colSel;
+      const branch = document.getElementById("branch").value;
+      const year   = document.getElementById("year").value;
+      const mobile = document.getElementById("mobile").value.trim();
+
+      if (!name)                         { setError("name",    "Name is required.");                  valid = false; }
+      if (!college)                      { setError("college", "Please select or enter a college.");   valid = false; }
+      if (!branch)                       { setError("branch",  "Please select a department.");         valid = false; }
+      if (!year)                         { setError("year",    "Please select a year.");               valid = false; }
+      if (!/^[6-9]\d{9}$/.test(mobile)) { setError("mobile",  "Enter a valid 10-digit Indian mobile number."); valid = false; }
+
+      if (!valid) return;
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "Submitting…";
+
+      try {
+        await addDoc(collection(db, "cr_registrations"), {
+          name, college, branch, year, mobile,
+          createdAt: serverTimestamp(),
+        });
+        showToast("✅ CR details saved successfully!");
+        document.getElementById("crForm").reset();
+        document.getElementById("college-other").style.display = "none";
+      } catch (err) {
+        showToast("❌ Error: " + err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "✅ Submit CR Details";
+      }
+    });
+
+    /* ── helpers ── */
+    function setError(field, msg) {
+      document.getElementById(field)?.classList.add("error");
+      const el = document.getElementById(field + "-err");
+      if (el) el.textContent = msg;
+    }
+    function clearErrors() {
+      ["name","college","branch","year","mobile"].forEach(f => {
+        document.getElementById(f)?.classList.remove("error");
+        const el = document.getElementById(f + "-err");
+        if (el) el.textContent = "";
+      });
+    }
+    function showToast(msg, isErr = false) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.className = "toast" + (isErr ? " error-toast" : "");
+      requestAnimationFrame(() => t.classList.add("show"));
+      setTimeout(() => t.classList.remove("show"), 3500);
+    }
+  </script>
+
+</body>
+</html>

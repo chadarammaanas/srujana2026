@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR Dashboard – SRUJANA 2026</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════
+       PIN LOCK SCREEN
+  ══════════════════════════════════ -->
+  <div id="lockScreen" class="lock-screen">
+    <div class="lock-card">
+      <div style="font-size:40px;margin-bottom:8px;">🔒</div>
+      <div class="lock-title">Admin Access</div>
+      <div class="lock-sub">SRUJANA 2026 – CR Dashboard</div>
+      <input type="password" id="pinInput" class="pin-input"
+             placeholder="Enter admin PIN"
+             maxlength="20" autocomplete="off" />
+      <span class="error-msg" id="pin-err" style="text-align:center;display:block;"></span>
+      <button class="btn-submit" id="pinBtn" style="margin-top:12px;">Unlock Dashboard</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       DASHBOARD  (hidden until unlocked)
+  ══════════════════════════════════ -->
+  <div id="dashboardWrap" style="display:none;">
+
+    <!-- ── HEADER ── -->
+    <div class="header-banner">
+      <div class="event-label">Admin Dashboard</div>
+      <h1>SRUJANA 2026</h1>
+      <div class="tagline">Class Representative Contact Directory</div>
+    </div>
+
+    <div class="container" style="max-width:1100px;">
+      <a href="index.html" class="back-link">← Back to Form</a>
+
+      <div class="card">
+        <!-- ── HEADER ROW ── -->
+        <div class="dash-header">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <h2>Registered CRs</h2>
+            <span class="count-badge" id="countBadge">0</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-secondary" id="exportBtn">⬇ Export CSV</button>
+            <button class="btn-secondary" id="whatsappBtn" style="background:#25d366;">📲 WhatsApp All</button>
+            <button class="btn-secondary" id="lockBtn" style="background:#6b7280;">🔒 Lock</button>
+          </div>
+        </div>
+
+        <!-- ── STATS ROW ── -->
+        <div class="stats-row" id="statsRow"></div>
+
+        <!-- ── FILTERS ── -->
+        <div class="filter-bar">
+          <input type="text" id="searchInput" placeholder="🔍  Search by name, college or branch…" />
+          <select id="collegeFilter"><option value="">All Colleges</option></select>
+          <select id="yearFilter">
+            <option value="">All Years</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+          </select>
+        </div>
+
+        <!-- ── TABLE ── -->
+        <div class="table-wrap">
+          <table id="crTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>College</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Mobile</th>
+                <th>Registered On</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr><td colspan="7" class="loading-state">⏳ Loading data…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div><!-- /card -->
+    </div>
+
+  </div><!-- /dashboardWrap -->
+
+  <!-- ── TOAST ── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ── FIREBASE v9 (CDN) ── -->
+  <script type="module">
+    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot }
+                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* ══════════════════════════════
+       ADMIN PIN  –  change this!
+    ══════════════════════════════ */
+    const ADMIN_PIN = "srujana2026";
+
+    /* ── PIN LOCK ── */
+    const SESSION_KEY = "srujana_admin_auth";
+    const lockScreen  = document.getElementById("lockScreen");
+    const dashWrap    = document.getElementById("dashboardWrap");
+
+    function unlock() {
+      lockScreen.style.display = "none";
+      dashWrap.style.display   = "block";
+      sessionStorage.setItem(SESSION_KEY, "1");
+      initDashboard();
+    }
+
+    // Stay unlocked within the same browser tab session
+    if (sessionStorage.getItem(SESSION_KEY) === "1") {
+      unlock();
+    }
+
+    document.getElementById("pinBtn").addEventListener("click", checkPin);
+    document.getElementById("pinInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") checkPin();
+    });
+
+    function checkPin() {
+      const val = document.getElementById("pinInput").value.trim();
+      if (val === ADMIN_PIN) {
+        document.getElementById("pin-err").textContent = "";
+        unlock();
+      } else {
+        document.getElementById("pin-err").textContent = "⛔ Incorrect PIN. Please try again.";
+        document.getElementById("pinInput").value = "";
+        document.getElementById("pinInput").focus();
+      }
+    }
+
+    document.getElementById("lockBtn").addEventListener("click", () => {
+      sessionStorage.removeItem(SESSION_KEY);
+      location.reload();
+    });
+
+    /* ══════════════════════════════
+       DASHBOARD LOGIC
+    ══════════════════════════════ */
+    async function initDashboard() {
+      /* parse firebase-config.js */
+      const firebaseConfig = await fetch("firebase-config.js")
+        .then(r => r.text())
+        .then(src => {
+          const m = src.match(/const firebaseConfig\s*=\s*(\{[\s\S]*?\});/);
+          if (!m) throw new Error("Cannot parse config");
+          return new Function("return " + m[1])(); // eslint-disable-line no-new-func
+        })
+        .catch(() => null);
+
+      if (!firebaseConfig || firebaseConfig.apiKey === "YOUR_API_KEY") {
+        document.getElementById("tableBody").innerHTML =
+          `<tr><td colspan="7"><div class="empty-state">
+             <div class="icon">⚙️</div>
+             Firebase not configured. Edit <strong>firebase-config.js</strong> first.
+           </div></td></tr>`;
+        return;
+      }
+
+      const app = initializeApp(firebaseConfig);
+      const db  = getFirestore(app);
+
+      let allData = [];
+
+      /* live listener */
+      const q = query(collection(db, "cr_registrations"), orderBy("createdAt", "desc"));
+      onSnapshot(q, snap => {
+        allData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        populateCollegeFilter(allData);
+        renderTable(allData);
+        renderStats(allData);
+      }, err => {
+        document.getElementById("tableBody").innerHTML =
+          `<tr><td colspan="7"><div class="empty-state">
+             <div class="icon">⚠️</div>${err.message}
+           </div></td></tr>`;
+      });
+
+      /* filters */
+      ["searchInput","collegeFilter","yearFilter"].forEach(id =>
+        document.getElementById(id).addEventListener("input",  () => applyFilters(allData)));
+      document.getElementById("collegeFilter").addEventListener("change", () => applyFilters(allData));
+      document.getElementById("yearFilter").addEventListener("change",    () => applyFilters(allData));
+
+      function applyFilters(data) {
+        const search  = document.getElementById("searchInput").value.toLowerCase();
+        const college = document.getElementById("collegeFilter").value;
+        const year    = document.getElementById("yearFilter").value;
+        const filtered = data.filter(r =>
+          (!search  || r.name?.toLowerCase().includes(search)
+                     || r.college?.toLowerCase().includes(search)
+                     || r.branch?.toLowerCase().includes(search)) &&
+          (!college || r.college === college) &&
+          (!year    || r.year === year)
+        );
+        renderTable(filtered);
+        document.getElementById("countBadge").textContent = filtered.length;
+      }
+
+      /* export CSV */
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        if (!allData.length) { showToast("No data to export.", true); return; }
+        const headers = ["#","Name","College","Department","Year","Mobile","Registered On"];
+        const rows = allData.map((r, i) => [
+          i+1, r.name, r.college, r.branch, r.year, r.mobile, formatDate(r.createdAt)
+        ].map(v => `"${String(v ?? "").replace(/"/g,'""')}"`).join(","));
+        const csv  = [headers.join(","), ...rows].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url  = URL.createObjectURL(blob);
+        Object.assign(document.createElement("a"),
+          { href: url, download: `srujana2026_cr_${Date.now()}.csv` }
+        ).click();
+        URL.revokeObjectURL(url);
+        showToast("✅ CSV exported!");
+      });
+
+      /* whatsapp bulk message */
+      document.getElementById("whatsappBtn").addEventListener("click", () => {
+        const visible = getVisibleRows();
+        if (!visible.length) { showToast("No entries to message.", true); return; }
+        const msg = encodeURIComponent(
+          `*SRUJANA 2026* – State Level Mega Exhibition\n` +
+          `📅 3rd–5th April 2026 | 📍 SVPEC, Visakhapatnam\n\n` +
+          `Hi, you're invited to participate!\n` +
+          `Register: https://srujana2026.in\n\n` +
+          `Prize: Upto ₹1 LAKH 🏆`
+        );
+        window.open(`https://wa.me/?text=${msg}`, "_blank");
+      });
+
+      function getVisibleRows() {
+        return Array.from(document.querySelectorAll("#tableBody tr[data-id]"))
+          .map(tr => allData.find(r => r.id === tr.dataset.id))
+          .filter(Boolean);
+      }
+    }
+
+    /* ── renderers ── */
+    function populateCollegeFilter(data) {
+      const sel = document.getElementById("collegeFilter");
+      const current = sel.value;
+      const colleges = [...new Set(data.map(r => r.college).filter(Boolean))].sort();
+      sel.innerHTML = `<option value="">All Colleges</option>` +
+        colleges.map(c => `<option ${c===current?'selected':''}>${esc(c)}</option>`).join("");
+    }
+
+    function renderStats(data) {
+      const total    = data.length;
+      const colleges = new Set(data.map(r => r.college)).size;
+      const today    = data.filter(r => {
+        if (!r.createdAt) return false;
+        const d = r.createdAt.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+        return d.toDateString() === new Date().toDateString();
+      }).length;
+      document.getElementById("statsRow").innerHTML = `
+        <div class="stat-chip">👥 <strong>${total}</strong> Total CRs</div>
+        <div class="stat-chip">🏫 <strong>${colleges}</strong> Colleges</div>
+        <div class="stat-chip">📅 <strong>${today}</strong> Today</div>
+      `;
+    }
+
+    function renderTable(data) {
+      document.getElementById("countBadge").textContent = data.length;
+      if (!data.length) {
+        document.getElementById("tableBody").innerHTML =
+          `<tr><td colspan="7"><div class="empty-state">
+             <div class="icon">📭</div>No entries found.
+           </div></td></tr>`;
+        return;
+      }
+      document.getElementById("tableBody").innerHTML = data.map((r, i) => `
+        <tr data-id="${r.id}">
+          <td style="color:var(--muted);font-size:12px;">${i+1}</td>
+          <td style="font-weight:600;">${esc(r.name)}</td>
+          <td style="max-width:200px;word-break:break-word;font-size:12px;">${esc(r.college)}</td>
+          <td style="max-width:170px;word-break:break-word;font-size:12px;">${esc(r.branch)}</td>
+          <td><span class="year-chip">${esc(r.year)}</span></td>
+          <td style="white-space:nowrap;">
+            <a class="mobile-link" href="tel:${esc(r.mobile)}">📞 ${esc(r.mobile)}</a>
+            <button class="copy-btn" title="Copy" onclick="copyNum('${esc(r.mobile)}')">📋</button>
+            <a class="copy-btn" title="WhatsApp"
+               href="https://wa.me/91${esc(r.mobile)}?text=${encodeURIComponent('Hi '+r.name+', you are invited to SRUJANA 2026 (3–5 Apr, SVPEC Vizag). Prize upto ₹1 Lakh! Register: srujana2026.in')}"
+               target="_blank">💬</a>
+          </td>
+          <td style="color:var(--muted);font-size:12px;white-space:nowrap;">${formatDate(r.createdAt)}</td>
+        </tr>
+      `).join("");
+    }
+
+    /* ── helpers ── */
+    function esc(s) {
+      return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+    function formatDate(ts) {
+      if (!ts) return "—";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString("en-IN",
+        { day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" });
+    }
+    function showToast(msg, isErr=false) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.className = "toast" + (isErr ? " error-toast" : "");
+      requestAnimationFrame(() => t.classList.add("show"));
+      setTimeout(() => t.classList.remove("show"), 2800);
+    }
+
+    window.copyNum = num =>
+      navigator.clipboard.writeText(num)
+        .then(() => showToast("📋 " + num + " copied!"))
+        .catch(() => showToast("Could not copy.", true));
+  </script>
+
+</body>
+</html>
