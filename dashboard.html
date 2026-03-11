@@ -151,24 +151,16 @@
        DASHBOARD LOGIC
     ══════════════════════════════ */
     async function initDashboard() {
-      /* parse firebase-config.js */
-      const firebaseConfig = await fetch("firebase-config.js")
-        .then(r => r.text())
-        .then(src => {
-          const m = src.match(/const firebaseConfig\s*=\s*(\{[\s\S]*?\});/);
-          if (!m) throw new Error("Cannot parse config");
-          return new Function("return " + m[1])(); // eslint-disable-line no-new-func
-        })
-        .catch(() => null);
-
-      if (!firebaseConfig || firebaseConfig.apiKey === "YOUR_API_KEY") {
-        document.getElementById("tableBody").innerHTML =
-          `<tr><td colspan="7"><div class="empty-state">
-             <div class="icon">⚙️</div>
-             Firebase not configured. Edit <strong>firebase-config.js</strong> first.
-           </div></td></tr>`;
-        return;
-      }
+      /* ── Firebase config (inlined) ── */
+      const firebaseConfig = {
+        apiKey: "AIzaSyBJuinaGCtOKij845nETeXJIib2FjuC_XQ",
+        authDomain: "srujana-18a0f.firebaseapp.com",
+        projectId: "srujana-18a0f",
+        storageBucket: "srujana-18a0f.firebasestorage.app",
+        messagingSenderId: "1082148909238",
+        appId: "1:1082148909238:web:ec486ed40b4ad1a7ce7617",
+        measurementId: "G-Y4WBVHVX0S"
+      };
 
       const app = initializeApp(firebaseConfig);
       const db  = getFirestore(app);
